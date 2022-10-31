@@ -7,38 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model habit {
-  id        Int         @id @default(autoincrement())
-  user_id   Int
-  title     String      @db.VarChar(245)
-  color     String      @db.Char(6)
+model Habit {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @map("user_id")
+  title     String     @db.VarChar(245)
+  color     String     @db.Char(6)
   type      habit_type
-  user      user        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_user")
-  habit_log habit_log[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_user")
+  habitLogs HabitLog[]
 
-  @@index([user_id], map: "fk_habit_user_idx")
+  @@index([userId], map: "fk_habit_user_idx")
+  @@map("habit")
 }
 
-model habit_log {
-  id           Int      @id @default(autoincrement())
-  habit_id     Int
-  user_id      Int
-  day          DateTime @db.Date
-  binary_value Int?     @db.TinyInt
-  timer_value  Int?
-  habit        habit    @relation(fields: [habit_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_habit1")
-  user         user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_user1")
+model HabitLog {
+  id          Int      @id @default(autoincrement())
+  habitId     Int      @map("habit_id")
+  userId      Int      @map("user_id")
+  day         DateTime @db.Date
+  binaryValue Int?     @map("binary_value") @db.TinyInt
+  timerValue  Int?     @map("timer_value")
+  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_habit1")
+  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_user1")
 
-  @@index([habit_id], map: "fk_habit_log_habit1_idx")
-  @@index([user_id], map: "fk_habit_log_user1_idx")
+  @@index([habitId], map: "fk_habit_log_habit1_idx")
+  @@index([userId], map: "fk_habit_log_user1_idx")
+  @@map("habit_log")
 }
 
-model user {
-  id        Int         @id @default(autoincrement())
-  username  String      @db.VarChar(265)
-  email     String      @unique(map: "email_UNIQUE") @db.VarChar(265)
-  habit     habit[]
-  habit_log habit_log[]
+model User {
+  id        Int        @id @default(autoincrement())
+  username  String     @db.VarChar(265)
+  email     String     @unique(map: "email_UNIQUE") @db.VarChar(265)
+  habits    Habit[]
+  habitLogs HabitLog[]
+
+  @@map("user")
 }
 
 enum habit_type {
