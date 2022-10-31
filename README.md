@@ -23,12 +23,7 @@ docker build . --tag heatmaps
 Run the database container:
 
 ```sh
-docker run
-  --rm
-  -d
-  -p 3306:3306
-  --name heatmaps-container
-  heatmaps
+docker run  -d  -p 3306:3306  --name heatmaps-db-container  heatmaps
 ```
 
 # System Architecture 
