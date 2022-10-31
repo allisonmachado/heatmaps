@@ -17,13 +17,25 @@ This is the database for the habits tracker app:
 Change into the `/prisma` directory and build the Docker image:
 
 ```sh
-docker build . --tag heatmaps
+$ docker build . --tag heatmaps
 ```
 
 Run the database container:
 
 ```sh
-docker run  -d  -p 3306:3306  --name heatmaps-db-container  heatmaps
+$ docker run  -d  -p 3306:3306  --name heatmaps-db-container  heatmaps
+```
+
+## Object Relational Mapping
+
+This project uses Prisma ORM and the database client interface is generated based on the file `prisma/schema.prisma`.
+
+![Prisma ORM Client](prisma/client.png "Prisma ORM Client")
+
+To update the client run:
+
+```sh
+$ npx prisma generate
 ```
 
 # System Architecture 
