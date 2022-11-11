@@ -51,9 +51,20 @@ To be able to accommodate a source code base that may grow big as time passes, a
 - *./src/controllers* - delegates the request to the appropriate underlying system.
 - *./src/services* - custom business related processing and rules (optional).
 - *./src/repositories* - database entities interaction.
+
+The creation and naming of the elements above should always attempt to mimic the application model and entities. The application model is composed by the Entities defined in the system, such as `Users`, `Habits` and `HabitLogs`. For example, we could imagine a user-controller, user-service and user-repository.
+
+For code and definitions that are highly generic and that are not necessarily attached to any application model or entities, we should define them in the `lib` layer:
+
 - *./src/lib* - shared and reusable code.
 
-The creation and naming of those elements should always attempt to mimic the application Model. The application model is composed by the Entities defined in the system, such as `Users`, `Habits` and `HabitLogs`. For example, we could imagine a user-controller, user-service and user-repository.
+## Use relative imports
+
+The creator of the Nest.js [suggests][1] that using the absolute paths is a bad practice. Also, the TypeScript's official documentation [recommends][2] using relative paths for our own modules. 
+
+Configure VS Code to import using relative paths by default
+
+`"typescript.preferences.importModuleSpecifier": "relative"`
 
 # System Design
 
@@ -133,3 +144,10 @@ The logs are saved in the `habit_log` table.
 Important validation:
 - Check if the habit belongs to the user
 - Check if the payload type correspond to the habit type
+
+
+
+
+
+[1]: https://github.com/nestjs/typeorm/issues/321#issuecomment-588678297
+[2]: https://www.typescriptlang.org/docs/handbook/module-resolution.html#relative-vs-non-relative-module-imports
