@@ -38,6 +38,8 @@ To update the client run:
 $ npx prisma generate
 ```
 
+To fix schema drift in the development environment [check this link][3].
+
 # System Architecture 
 
 A simple three tier architecture is proposed to develop the solution.
@@ -151,3 +153,4 @@ Important validation:
 
 [1]: https://github.com/nestjs/typeorm/issues/321#issuecomment-588678297
 [2]: https://www.typescriptlang.org/docs/handbook/module-resolution.html#relative-vs-non-relative-module-imports
+[3]: Fixing schema drift in a development environment
