@@ -39,6 +39,7 @@ model User {
   id        Int        @id @default(autoincrement())
   username  String     @db.VarChar(265)
   email     String     @unique(map: "email_UNIQUE") @db.VarChar(265)
+  password  String     @db.VarChar(512)
   habits    Habit[]
   habitLogs HabitLog[]
 

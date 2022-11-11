@@ -32,13 +32,19 @@ This project uses Prisma ORM and the database client interface is generated base
 
 ![Prisma ORM Client](prisma/client.png "Prisma ORM Client")
 
-To update the client run:
+To fix schema drift in the development environment [check this link][3].
+
+To change the database schema, first alter the file ./prisma/schema.prisma. Then execute the prisma cli to sync the database changes:
+
+```
+$ prisma migrate dev --name migration_name
+```
+
+After database modifications, it's necessary to update the prisma client:
 
 ```sh
 $ npx prisma generate
 ```
-
-To fix schema drift in the development environment [check this link][3].
 
 # System Architecture 
 
