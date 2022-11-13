@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './services/user.service';
-import { PrismaConnector } from './lib/prisma.connector';
 import { AuthService } from './services/auth.service';
-import { LocalStrategy } from './lib/local.strategy';
+import { AuthController } from './controllers/auth.controller';
+import { PrismaConnector } from './lib/db/prisma.connector';
+import { LocalStrategy } from './lib/auth/local.strategy';
 
 @Module({
   imports: [],
-  controllers: [],
+  controllers: [AuthController],
   providers: [UserService, PrismaConnector, AuthService, LocalStrategy],
 })
 export class AppModule {}
