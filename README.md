@@ -74,6 +74,23 @@ Configure VS Code to import using relative paths by default
 
 `"typescript.preferences.importModuleSpecifier": "relative"`
 
+## Example of generating new resources
+
+To create a new controller run:
+```bash
+$ nest g controller controllers/user --flat
+```
+
+To create a new service run:
+```bash
+$ nest g service services/user --flat
+```
+
+To create a new repository run:
+```bash
+$ nest g provider repositories/user --flat
+```
+
 # System Design
 
 ## List a user habits
