@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaConnector } from '../lib/prisma-connector';
+import { PrismaConnector } from '../lib/prisma.connector';
 import { UserService } from './user.service';
 
 describe.only('UserService', () => {
