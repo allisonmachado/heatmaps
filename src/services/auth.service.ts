@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from '../lib/dto/jwt-payload';
 
 @Injectable()
 export class AuthService {
@@ -26,10 +27,10 @@ export class AuthService {
   }
 
   async loginUser(user: Omit<User, 'password'>) {
-    const payload = {
-      username: user.username,
+    const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
+      username: user.username,
     };
 
     return {

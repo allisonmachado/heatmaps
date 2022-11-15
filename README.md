@@ -170,10 +170,21 @@ Important validation:
 - Check if the habit belongs to the user
 - Check if the payload type correspond to the habit type
 
+## Authenticate a user
+
+> loginUser(user);
+
+Parameters:
+- user: The logged user for which the authentication token should be retrieved
+
+This method should only be called to issue a token if the username and password are correct
+
+The authentication flow and implementation follows the [nestjs][4] reference.
 
 
 
 
 [1]: https://github.com/nestjs/typeorm/issues/321#issuecomment-588678297
 [2]: https://www.typescriptlang.org/docs/handbook/module-resolution.html#relative-vs-non-relative-module-imports
-[3]: Fixing schema drift in a development environment
+[3]: https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate/troubleshooting-development#fixing-schema-drift-in-a-development-environment
+[4]: https://docs.nestjs.com/security/authentication

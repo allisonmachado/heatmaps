@@ -6,6 +6,7 @@ import { PrismaConnector } from './lib/db/prisma.connector';
 import { LocalStrategy } from './lib/auth/local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './lib/auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWS_SECRET'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: '86400s',
         },
@@ -22,6 +23,12 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [UserService, PrismaConnector, AuthService, LocalStrategy],
+  providers: [
+    UserService,
+    PrismaConnector,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+  ],
 })
 export class AppModule {}
