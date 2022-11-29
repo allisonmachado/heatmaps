@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './lib/auth/jwt.strategy';
 import { JwtAuthGuard } from './lib/auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { HabitController } from './controllers/habit.controller';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { APP_GUARD } from '@nestjs/core';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, HabitController],
   providers: [
     UserService,
     PrismaConnector,
