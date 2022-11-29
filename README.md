@@ -2,7 +2,7 @@
 
 The HeatMaps application is a habit tracker system to help one develop a life of discipline.
 
-Inspired by lifeofdiscipline.com, the goal is to have a similar system without the limitations imposed by their unpayd subscription.
+Inspired by `lifeofdiscipline.com`, the goal is to have a similar system without the limitations imposed by their unpayd subscription.
 
 > **This is the repository for the backend-api and database development.**
 
@@ -12,18 +12,40 @@ This is the database for the habits tracker app:
 
 ![Entity Relationship Diagram](prisma/ERD.png "Entity Relationship Diagram")
 
-## Initializing a temporary MySQL instance from the logical backup
+## Initialize database for development
 
-Change into the `/prisma` directory and build the Docker image:
+Run the docker container:
 
 ```sh
-$ docker build . --tag heatmaps
+$ docker run -p 3306:3306 --name heatmaps-db --env MYSQL_ROOT_PASSWORD=123456 --detach mysql:8.0
 ```
 
-Run the database container:
+If the container stops afterwards you can just restart it:
 
 ```sh
-$ docker run  -d  -p 3306:3306  --name heatmaps-db-container  heatmaps
+$ docker restart heatmaps-db
+```
+
+## Initialize project for development
+
+1. Set the system env variables (or the `.env` file) with [the necessary information][5].
+
+2. Sync the database schema:
+
+```sh
+$ npx prisma migrate reset
+```
+
+3. Install the application dependencies:
+
+```sh
+$ npm install
+```
+
+4. Start the development:
+
+```sh
+$ npm run start:dev
 ```
 
 ## Object Relational Mapping
@@ -188,3 +210,4 @@ The authentication flow and implementation follows the [nestjs][4] reference.
 [2]: https://www.typescriptlang.org/docs/handbook/module-resolution.html#relative-vs-non-relative-module-imports
 [3]: https://www.prisma.io/docs/guides/database/developing-with-prisma-migrate/troubleshooting-development#fixing-schema-drift-in-a-development-environment
 [4]: https://docs.nestjs.com/security/authentication
+[5]: https://gist.github.com/allisonmachado/4ffe26d65e689dce9d63dcaca4391ad8
