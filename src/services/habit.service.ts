@@ -20,6 +20,14 @@ export class HabitService {
     });
   }
 
+  async listUserHabits(userId: number) {
+    return this.prismaConnector.habit.findMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async updateUserHabit(
     habitId: number,
     habit: HabitUpdateInput,

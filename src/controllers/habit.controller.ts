@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -25,6 +26,11 @@ export class HabitController {
     @Request() req: AuthenticatedRequest,
   ) {
     await this.habitService.createUserHabit(habit, req.user.id);
+  }
+
+  @Get('/')
+  async listUserHabits(@Request() req: AuthenticatedRequest) {
+    return this.habitService.listUserHabits(req.user.id);
   }
 
   @Put('/:id')
