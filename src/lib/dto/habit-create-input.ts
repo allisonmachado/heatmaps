@@ -1,12 +1,11 @@
 import { IsString } from 'class-validator';
 
-export class Habit {
+export class HabitCreateInput {
   @IsString()
   title: string;
 
   @IsString()
-  color: number;
+  color: string;
 
-  @IsString()
-  type: string;
+  type: 'binary' | 'timer';
 }

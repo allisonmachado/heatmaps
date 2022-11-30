@@ -6,17 +6,18 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthenticatedRequest } from '../lib/dto/authenticated-request';
-import { Habit } from '../lib/dto/habit';
+import { HabitCreateInput } from '../lib/dto/habit-create-input';
+import { HabitService } from '../services/habit.service';
 
 @Controller('habits')
 export class HabitController {
+  constructor(private habitService: HabitService) {}
+
   @Post('/')
   async createUserHabit(
-    @Body(ValidationPipe) habit: Habit,
+    @Body(ValidationPipe) habit: HabitCreateInput,
     @Request() req: AuthenticatedRequest,
   ) {
-    console.log('habit: ', habit);
-    console.log('user: ', req.user);
-    return true;
+    await this.habitService.createUserHabit(habit, req.user.id);
   }
 }
