@@ -9,9 +9,7 @@ export class HabitService {
   async createUserHabit(habit: HabitCreateInput, userId: number) {
     await this.prismaConnector.habit.create({
       data: {
-        title: habit.title,
-        color: habit.color,
-        type: habit.type,
+        ...habit,
         user: {
           connect: {
             id: userId,
