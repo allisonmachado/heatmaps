@@ -132,6 +132,7 @@ Parameters:
 - user: The logged user for which the habits should be retrieved
 - title: The title string for the habit
 - color: The hex value for the habit displayed color
+- type: The type of the habit (timer, binary)
 
 The record is inserted into the `habit` table.
 
