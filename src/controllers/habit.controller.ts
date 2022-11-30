@@ -1,4 +1,15 @@
-import { Body, Controller, Param, Post, Put, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Request,
+  Response,
+} from '@nestjs/common';
+import { Response as ExpResponse } from 'express';
 import { AuthenticatedRequest } from '../lib/dto/authenticated-request';
 import { HabitCreateInput } from '../lib/dto/habit-create-input';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input';
@@ -18,12 +29,21 @@ export class HabitController {
 
   @Put('/:id')
   async updateUserHabit(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() habit: HabitUpdateInput,
     @Request() req: AuthenticatedRequest,
+    @Response() res: ExpResponse,
   ) {
-    console.log('id -> ', id);
-    console.log('habit -> ', habit);
-    console.log('req.user -> ', req.user);
+    const count = await this.habitService.updateUserHabit(
+      id,
+      habit,
+      req.user.id,
+    );
+
+    if (!count) {
+      res.status(HttpStatus.NOT_FOUND).send();
+    } else {
+      res.status(HttpStatus.OK).send();
+    }
   }
 }

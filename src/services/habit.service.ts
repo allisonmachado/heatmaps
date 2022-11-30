@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaConnector } from '../lib/db/prisma.connector';
 import { HabitCreateInput } from '../lib/dto/habit-create-input';
+import { HabitUpdateInput } from '../lib/dto/habit-update-input';
 
 @Injectable()
 export class HabitService {
@@ -17,5 +18,29 @@ export class HabitService {
         },
       },
     });
+  }
+
+  async updateUserHabit(
+    habitId: number,
+    habit: HabitUpdateInput,
+    userId: number,
+  ) {
+    const { count } = await this.prismaConnector.habit.updateMany({
+      where: {
+        AND: [
+          {
+            id: habitId,
+          },
+          {
+            userId: userId,
+          },
+        ],
+      },
+      data: {
+        ...habit,
+      },
+    });
+
+    return count;
   }
 }
