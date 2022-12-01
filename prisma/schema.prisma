@@ -23,15 +23,11 @@ model Habit {
 model HabitLog {
   id          Int      @id @default(autoincrement())
   habitId     Int      @map("habit_id")
-  userId      Int      @map("user_id")
   day         DateTime @db.Date
-  binaryValue Int?     @map("binary_value") @db.TinyInt
   timerValue  Int?     @map("timer_value")
   habit       Habit    @relation(fields: [habitId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_habit1")
-  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_user1")
 
   @@index([habitId], map: "fk_habit_log_habit1_idx")
-  @@index([userId], map: "fk_habit_log_user1_idx")
   @@map("habit_log")
 }
 
@@ -41,7 +37,6 @@ model User {
   email     String     @unique(map: "email_UNIQUE") @db.VarChar(265)
   password  String     @db.VarChar(512)
   habits    Habit[]
-  habitLogs HabitLog[]
 
   @@map("user")
 }
