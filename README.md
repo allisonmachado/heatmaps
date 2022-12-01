@@ -56,10 +56,12 @@ This project uses Prisma ORM and the database client interface is generated base
 
 To fix schema drift in the development environment [check this link][3].
 
+### Database changes
+
 To change the database schema, first alter the file ./prisma/schema.prisma. Then execute the prisma cli to sync the database changes:
 
 ```
-$ prisma migrate dev --name migration_name
+$ npx prisma migrate dev --name migration_name
 ```
 
 After database modifications, it's necessary to update the prisma client:
@@ -181,8 +183,8 @@ This interface queries the `habit_log` table and returns all the logs for the gi
 > logUserHabit(user, habit, date, value);
 
 Parameters:
-- user: The logged user for which the logs should be retrieved
-- habit: The habit for which the logs should be retrieved
+- user: The logged user for which the logs should be registered
+- habit: The habit for which the logs should be registered
 - date: The date in which the user is practicing the habit
 - value: The value to be tracked
     - The value data type can vary depending on the habit

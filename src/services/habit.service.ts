@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaConnector } from '../lib/db/prisma.connector';
+import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input';
 import { HabitCreateInput } from '../lib/dto/habit-create-input';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input';
+import { LogTypes } from '../lib/dto/log-types';
+import { ForbiddenAccess } from '../lib/errors/forbidden-access';
+import { EntityNotFound } from '../lib/errors/habit-not-found';
+import { InvalidType } from '../lib/errors/invalid-type';
 
 @Injectable()
 export class HabitService {
@@ -14,6 +19,43 @@ export class HabitService {
         user: {
           connect: {
             id: userId,
+          },
+        },
+      },
+    });
+  }
+
+  async logUserHabit(
+    habitId: number,
+    log: BinaryLogCreateInput,
+    userId: number,
+    type: LogTypes,
+  ) {
+    const habit = await this.prismaConnector.habit.findUnique({
+      where: {
+        id: habitId,
+      },
+    });
+
+    if (!habit) {
+      throw new EntityNotFound('Habit', habitId);
+    }
+
+    if (habit.type !== type) {
+      throw new InvalidType(type);
+    }
+
+    if (habit.userId !== userId) {
+      throw new ForbiddenAccess(userId, habitId, 'Habit');
+    }
+
+    await this.prismaConnector.habitLog.create({
+      data: {
+        ...log,
+        day: new Date(log.day),
+        habit: {
+          connect: {
+            id: habitId,
           },
         },
       },
