@@ -23,6 +23,7 @@ import { LogTypes } from '../lib/dto/log-types';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
+import { UniqueConstraintFail } from '../lib/errors/unique-constraint-fail';
 import { HabitService } from '../services/habit.service';
 
 @Controller('habits')
@@ -65,7 +66,7 @@ export class HabitController {
   }
 
   @Post('/:habitId/logs/binary')
-  async logUserHabit(
+  async logUserBinaryHabit(
     @Param('habitId', ParseIntPipe) habitId: number,
     @Body() log: BinaryLogCreateInput,
     @Request() req: AuthenticatedRequest,
@@ -86,6 +87,9 @@ export class HabitController {
       }
       if (error instanceof ForbiddenAccess) {
         throw new ForbiddenException(error.message);
+      }
+      if (error instanceof UniqueConstraintFail) {
+        throw new BadRequestException(error.message);
       }
 
       this.logger.error(error);
