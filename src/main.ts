@@ -14,6 +14,7 @@ async function bootstrap() {
     .setTitle('Heatmaps')
     .setDescription('Habits tracker application backend API')
     .setVersion(process.env.npm_package_version)
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
