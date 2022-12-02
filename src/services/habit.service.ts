@@ -29,8 +29,8 @@ export class HabitService {
 
   async logUserHabit(
     habitId: number,
-    log: BinaryLogCreateInput,
     userId: number,
+    log: BinaryLogCreateInput,
     type: LogTypes,
   ) {
     const habit = await this.prismaConnector.habit.findUnique({
