@@ -20,6 +20,7 @@ import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input';
 import { HabitCreateInput } from '../lib/dto/habit-create-input';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input';
 import { LogTypes } from '../lib/dto/log-types';
+import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
@@ -31,6 +32,33 @@ export class HabitController {
   private readonly logger = new Logger(HabitController.name);
 
   constructor(private habitService: HabitService) {}
+
+  private async logUserHabit(
+    habitId: number,
+    userId: number,
+    log: TimerLogCreateInput | BinaryLogCreateInput,
+    logType: LogTypes,
+  ) {
+    try {
+      await this.habitService.logUserHabit(habitId, userId, log, logType);
+    } catch (error) {
+      if (error instanceof EntityNotFound) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof InvalidType) {
+        throw new BadRequestException(error.message);
+      }
+      if (error instanceof ForbiddenAccess) {
+        throw new ForbiddenException(error.message);
+      }
+      if (error instanceof UniqueConstraintFail) {
+        throw new BadRequestException(error.message);
+      }
+
+      this.logger.error(error);
+      throw error;
+    }
+  }
 
   @Post('/')
   async createUserHabit(
@@ -71,29 +99,15 @@ export class HabitController {
     @Body() log: BinaryLogCreateInput,
     @Request() req: AuthenticatedRequest,
   ) {
-    try {
-      await this.habitService.logUserHabit(
-        habitId,
-        log,
-        req.user.id,
-        LogTypes.Binary,
-      );
-    } catch (error) {
-      if (error instanceof EntityNotFound) {
-        throw new NotFoundException(error.message);
-      }
-      if (error instanceof InvalidType) {
-        throw new BadRequestException(error.message);
-      }
-      if (error instanceof ForbiddenAccess) {
-        throw new ForbiddenException(error.message);
-      }
-      if (error instanceof UniqueConstraintFail) {
-        throw new BadRequestException(error.message);
-      }
+    await this.logUserHabit(habitId, req.user.id, log, LogTypes.Binary);
+  }
 
-      this.logger.error(error);
-      throw error;
-    }
+  @Post('/:habitId/logs/timer')
+  async logUserTimerHabit(
+    @Param('habitId', ParseIntPipe) habitId: number,
+    @Body() log: TimerLogCreateInput,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    await this.logUserHabit(habitId, req.user.id, log, LogTypes.Timer);
   }
 }
