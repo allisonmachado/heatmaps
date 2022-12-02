@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaConnector } from '../lib/db/prisma.connector';
-import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input';
-import { HabitCreateInput } from '../lib/dto/habit-create-input';
-import { HabitUpdateInput } from '../lib/dto/habit-update-input';
-import { LogTypes } from '../lib/dto/log-types';
+import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
+import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
+import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
+import { LogTypes } from '../lib/dto/log-types.dto';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';

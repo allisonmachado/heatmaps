@@ -15,12 +15,12 @@ import {
   Response,
 } from '@nestjs/common';
 import { Response as ExpResponse } from 'express';
-import { AuthenticatedRequest } from '../lib/dto/authenticated-request';
-import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input';
-import { HabitCreateInput } from '../lib/dto/habit-create-input';
-import { HabitUpdateInput } from '../lib/dto/habit-update-input';
-import { LogTypes } from '../lib/dto/log-types';
-import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input';
+import { AuthenticatedRequest } from '../lib/dto/authenticated-request.dto';
+import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
+import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
+import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
+import { LogTypes } from '../lib/dto/log-types.dto';
+import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input.dto';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
