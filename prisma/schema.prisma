@@ -27,6 +27,7 @@ model HabitLog {
   timerValue  Int?     @map("timer_value")
   habit       Habit    @relation(fields: [habitId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_habit_log_habit1")
 
+  @@unique([habitId, day])
   @@index([habitId], map: "fk_habit_log_habit1_idx")
   @@map("habit_log")
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaConnector } from '../lib/db/prisma.connector';
 import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input';
 import { HabitCreateInput } from '../lib/dto/habit-create-input';
@@ -7,6 +8,7 @@ import { LogTypes } from '../lib/dto/log-types';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
+import { UniqueConstraintFail } from '../lib/errors/unique-constraint-fail';
 
 @Injectable()
 export class HabitService {
@@ -49,17 +51,28 @@ export class HabitService {
       throw new ForbiddenAccess(userId, habitId, 'Habit');
     }
 
-    await this.prismaConnector.habitLog.create({
-      data: {
-        ...log,
-        day: new Date(log.day),
-        habit: {
-          connect: {
-            id: habitId,
+    try {
+      await this.prismaConnector.habitLog.create({
+        data: {
+          ...log,
+          day: new Date(log.day),
+          habit: {
+            connect: {
+              id: habitId,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new UniqueConstraintFail(`habit:${habitId} and day:${log.day}`);
+      } else {
+        throw error;
+      }
+    }
   }
 
   async listUserHabits(userId: number) {
