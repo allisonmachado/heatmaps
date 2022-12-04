@@ -6,5 +6,5 @@ export class TimerLogCreateInput {
 
   @IsInt()
   @Min(1)
-  timerValue: string;
+  timerValue: number;
 }
