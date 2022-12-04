@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaConnector } from '../lib/prisma.connector';
+import { PrismaConnector } from '../lib/db/prisma.connector';
 import { UserService } from './user.service';
 
-describe.only('UserService', () => {
+describe('UserService', () => {
   let service: UserService;
 
   beforeEach(async () => {

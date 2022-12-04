@@ -1,4 +1,8 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { PrismaConnector } from '../db/prisma.connector';
 import { LocalStrategy } from './local.strategy';
 
 describe('LocalStrategy', () => {
@@ -6,7 +10,13 @@ describe('LocalStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LocalStrategy],
+      providers: [
+        LocalStrategy,
+        AuthService,
+        UserService,
+        JwtService,
+        PrismaConnector,
+      ],
     }).compile();
 
     service = module.get<LocalStrategy>(LocalStrategy);
