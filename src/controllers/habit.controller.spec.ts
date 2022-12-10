@@ -11,14 +11,23 @@ import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import {
   BadRequestException,
   ForbiddenException,
+  HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
 import { UniqueConstraintFail } from '../lib/errors/unique-constraint-fail';
+import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
+import { Response } from 'express';
 
 describe('HabitController', () => {
   let moduleRef: TestingModule;
   let controller: HabitController;
   let service: HabitService;
+
+  const fakeExpressResponse = {
+    status: jest.fn().mockReturnValue({
+      send: () => undefined,
+    }),
+  };
 
   const fakeAuthReq: AuthenticatedRequest = {
     user: {
@@ -34,7 +43,12 @@ describe('HabitController', () => {
   const fakeBinaryLogCreateInput: BinaryLogCreateInput = {
     day: '2013-10-01',
   };
+  const fakeHabitUpdateInput: HabitUpdateInput = {
+    title: 'habit-title',
+    color: 'FFFFFF',
+  };
   const fakeHabitId = 1;
+  const fakeUserId = 1;
 
   it('should logUserTimerHabit', async () => {
     const habitId = 1;
@@ -53,7 +67,11 @@ describe('HabitController', () => {
 
     controller = moduleRef.get<HabitController>(HabitController);
 
-    controller.logUserTimerHabit(habitId, fakeTimerLogCreateInput, fakeAuthReq);
+    await controller.logUserTimerHabit(
+      habitId,
+      fakeTimerLogCreateInput,
+      fakeAuthReq,
+    );
 
     service = moduleRef.get<HabitService>(HabitService);
 
@@ -82,7 +100,7 @@ describe('HabitController', () => {
 
     controller = moduleRef.get<HabitController>(HabitController);
 
-    controller.logUserBinaryHabit(
+    await controller.logUserBinaryHabit(
       habitId,
       fakeBinaryLogCreateInput,
       fakeAuthReq,
@@ -230,5 +248,88 @@ describe('HabitController', () => {
         fakeAuthReq,
       );
     }).rejects.toThrow(BadRequestException);
+  });
+
+  it('should updateUserHabit', async () => {
+    moduleRef = await Test.createTestingModule({
+      controllers: [HabitController],
+    })
+      .useMocker((token) => {
+        if (token === HabitService) {
+          return {
+            updateUserHabit: jest.fn(),
+          };
+        }
+      })
+      .compile();
+
+    controller = moduleRef.get<HabitController>(HabitController);
+
+    await controller.updateUserHabit(
+      fakeUserId,
+      fakeHabitUpdateInput,
+      fakeAuthReq,
+      fakeExpressResponse as unknown as Response,
+    );
+
+    service = moduleRef.get<HabitService>(HabitService);
+
+    expect(service.updateUserHabit).toHaveBeenCalledWith(
+      fakeUserId,
+      fakeHabitUpdateInput,
+      fakeAuthReq.user.id,
+    );
+  });
+
+  it('should updateUserHabit and return NOT_FOUND status code', async () => {
+    moduleRef = await Test.createTestingModule({
+      controllers: [HabitController],
+    })
+      .useMocker((token) => {
+        if (token === HabitService) {
+          return {
+            updateUserHabit: jest.fn().mockResolvedValue(0),
+          };
+        }
+      })
+      .compile();
+
+    controller = moduleRef.get<HabitController>(HabitController);
+
+    await controller.updateUserHabit(
+      fakeUserId,
+      fakeHabitUpdateInput,
+      fakeAuthReq,
+      fakeExpressResponse as unknown as Response,
+    );
+
+    expect(fakeExpressResponse.status).toHaveBeenCalledWith(
+      HttpStatus.NOT_FOUND,
+    );
+  });
+
+  it('should updateUserHabit and return OK status code', async () => {
+    moduleRef = await Test.createTestingModule({
+      controllers: [HabitController],
+    })
+      .useMocker((token) => {
+        if (token === HabitService) {
+          return {
+            updateUserHabit: jest.fn().mockResolvedValue(1),
+          };
+        }
+      })
+      .compile();
+
+    controller = moduleRef.get<HabitController>(HabitController);
+
+    await controller.updateUserHabit(
+      fakeUserId,
+      fakeHabitUpdateInput,
+      fakeAuthReq,
+      fakeExpressResponse as unknown as Response,
+    );
+
+    expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
   });
 });
