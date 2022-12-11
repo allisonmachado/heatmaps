@@ -5,6 +5,7 @@ import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
 import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
 import { LogTypes } from '../lib/dto/log-types.dto';
+import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input.dto';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
@@ -30,7 +31,7 @@ export class HabitService {
   async logUserHabit(
     habitId: number,
     userId: number,
-    log: BinaryLogCreateInput,
+    log: TimerLogCreateInput | BinaryLogCreateInput,
     type: LogTypes,
   ) {
     const habit = await this.prismaConnector.habit.findUnique({
