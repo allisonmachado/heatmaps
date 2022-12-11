@@ -1,21 +1,31 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaConnector } from '../lib/db/prisma.connector';
 import { AuthService } from './auth.service';
 import { UserService } from './user.service';
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, UserService, PrismaConnector, JwtService],
-    }).compile();
+  const fakeEmail = 'user@email.com';
+  const fakePwd = 'asd';
 
-    service = module.get<AuthService>(AuthService);
-  });
+  it('should return null in case it does not find the user', async () => {
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      providers: [AuthService, JwtService],
+    })
+      .useMocker((token) => {
+        if (token === UserService) {
+          return {
+            findOne: jest.fn().mockResolvedValue(null),
+          };
+        }
+      })
+      .compile();
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    service = moduleRef.get<AuthService>(AuthService);
+
+    const result = await service.validateUser(fakeEmail, fakePwd);
+
+    expect(result).toBe(null);
   });
 });
