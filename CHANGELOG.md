@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/allisonmachado/heatmaps/compare/v0.1.0...v0.1.1) (2022-12-11)
+
+
+### Bug Fixes
+
+* test dependencies and context ([af5f696](https://github.com/allisonmachado/heatmaps/commit/af5f696d05b3b88ed4d0ec18c5b80365e88dceaa))
+
 ## [0.1.0](https://github.com/allisonmachado/heatmaps/compare/v0.0.2...v0.1.0) (2022-12-02)
 
 

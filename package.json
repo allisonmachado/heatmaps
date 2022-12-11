@@ -1,6 +1,6 @@
 {
   "name": "heatmaps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Habits tracker application backend API",
   "author": "Allison Machado Gonçalves",
   "private": true,
