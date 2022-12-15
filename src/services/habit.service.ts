@@ -107,4 +107,30 @@ export class HabitService {
 
     return count;
   }
+
+  async deleteUserHabit(habitId: number, userId: number): Promise<boolean> {
+    const habit = await this.prismaConnector.habit.findFirst({
+      where: {
+        id: habitId,
+        userId,
+      },
+    });
+
+    if (!habit) return false;
+
+    const [, habitDeleted] = await this.prismaConnector.$transaction([
+      this.prismaConnector.habitLog.deleteMany({
+        where: {
+          habitId,
+        },
+      }),
+      this.prismaConnector.habit.delete({
+        where: {
+          id: habitId,
+        },
+      }),
+    ]);
+
+    return !!habitDeleted;
+  }
 }

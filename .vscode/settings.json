@@ -2,4 +2,6 @@
     "files.eol": "\n",
     "editor.tabSize": 2,
     "typescript.preferences.importModuleSpecifier": "relative",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
 }
