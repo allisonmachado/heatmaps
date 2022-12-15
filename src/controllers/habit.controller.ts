@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpStatus,
@@ -109,5 +110,20 @@ export class HabitController {
     @Request() req: AuthenticatedRequest,
   ) {
     await this.logUserHabit(habitId, req.user.id, log, LogTypes.Timer);
+  }
+
+  @Delete('/:id')
+  async deleteUserHabit(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: AuthenticatedRequest,
+    @Response() res: ExpResponse,
+  ) {
+    const isDeleted = await this.habitService.deleteUserHabit(id, req.user.id);
+
+    if (isDeleted) {
+      res.status(HttpStatus.OK).send();
+    } else {
+      res.status(HttpStatus.NOT_FOUND).send();
+    }
   }
 }
