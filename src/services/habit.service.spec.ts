@@ -10,6 +10,7 @@ import { HabitService } from './habit.service';
 
 describe('HabitService', () => {
   const fakeHabitId = 1;
+  const fakeHabitLogId = 1;
   const fakeUserId = 1;
   const fakeTimerLogCreateInput = {
     day: '2022-12-11',
@@ -232,6 +233,150 @@ describe('HabitService', () => {
       expect(fakePrismaConnector.$transaction).toHaveBeenCalled();
       expect(fakePrismaConnector.habitLog.deleteMany).toHaveBeenCalled();
       expect(fakePrismaConnector.habit.delete).toHaveBeenCalled();
+    });
+  });
+
+  describe('delete user habit log', () => {
+    it('should return false if log does not exist', async () => {
+      const fakePrismaConnector = {
+        habitLog: {
+          findUnique: jest.fn().mockResolvedValue(null),
+          delete: jest.fn(),
+        },
+        habit: {
+          findFirst: jest.fn(),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const result = await service.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeUserId,
+      );
+
+      expect(result).toBe(false);
+      expect(fakePrismaConnector.habitLog.findUnique).toHaveBeenCalled();
+      expect(fakePrismaConnector.habit.findFirst).not.toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.delete).not.toHaveBeenCalled();
+    });
+
+    it('should return false if log does not belong to user', async () => {
+      const fakePrismaConnector = {
+        habitLog: {
+          findUnique: jest.fn().mockResolvedValue({
+            habitId: fakeHabitId,
+          }),
+          delete: jest.fn(),
+        },
+        habit: {
+          findFirst: jest.fn().mockResolvedValue(null),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const result = await service.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeUserId,
+      );
+
+      expect(result).toBe(false);
+      expect(fakePrismaConnector.habitLog.findUnique).toHaveBeenCalled();
+      expect(fakePrismaConnector.habit.findFirst).toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.delete).not.toHaveBeenCalled();
+    });
+
+    it('should return false if log does not belong to habit', async () => {
+      const fakePrismaConnector = {
+        habitLog: {
+          findUnique: jest.fn().mockResolvedValue({
+            habitId: fakeHabitId - 1,
+          }),
+          delete: jest.fn(),
+        },
+        habit: {
+          findFirst: jest.fn().mockResolvedValue(null),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const result = await service.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeUserId,
+      );
+
+      expect(result).toBe(false);
+      expect(fakePrismaConnector.habitLog.findUnique).toHaveBeenCalled();
+      expect(fakePrismaConnector.habit.findFirst).not.toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.delete).not.toHaveBeenCalled();
+    });
+
+    it('should delete habit log', async () => {
+      const fakePrismaConnector = {
+        habitLog: {
+          findUnique: jest.fn().mockResolvedValue({
+            habitId: fakeHabitId,
+          }),
+          delete: jest.fn().mockResolvedValue({}),
+        },
+        habit: {
+          findFirst: jest.fn().mockResolvedValue({}),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const result = await service.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeUserId,
+      );
+
+      expect(result).toBe(true);
+      expect(fakePrismaConnector.habitLog.findUnique).toHaveBeenCalled();
+      expect(fakePrismaConnector.habit.findFirst).toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.delete).toHaveBeenCalled();
     });
   });
 });
