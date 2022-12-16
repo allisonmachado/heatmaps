@@ -50,286 +50,292 @@ describe('HabitController', () => {
   const fakeHabitId = 1;
   const fakeUserId = 1;
 
-  it('should logUserTimerHabit', async () => {
-    const habitId = 1;
+  describe('log user habit', () => {
+    it('should logUserTimerHabit', async () => {
+      const habitId = 1;
 
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest.fn(),
-          };
-        }
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
       })
-      .compile();
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest.fn(),
+            };
+          }
+        })
+        .compile();
 
-    controller = moduleRef.get<HabitController>(HabitController);
+      controller = moduleRef.get<HabitController>(HabitController);
 
-    await controller.logUserTimerHabit(
-      habitId,
-      fakeTimerLogCreateInput,
-      fakeAuthReq,
-    );
-
-    service = moduleRef.get<HabitService>(HabitService);
-
-    expect(service.logUserHabit).toHaveBeenCalledWith(
-      habitId,
-      fakeAuthReq.user.id,
-      fakeTimerLogCreateInput,
-      LogTypes.Timer,
-    );
-  });
-
-  it('should logUserBinaryHabit', async () => {
-    const habitId = 1;
-
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest.fn(),
-          };
-        }
-      })
-      .compile();
-
-    controller = moduleRef.get<HabitController>(HabitController);
-
-    await controller.logUserBinaryHabit(
-      habitId,
-      fakeBinaryLogCreateInput,
-      fakeAuthReq,
-    );
-
-    service = moduleRef.get<HabitService>(HabitService);
-
-    expect(service.logUserHabit).toHaveBeenCalledWith(
-      habitId,
-      fakeAuthReq.user.id,
-      fakeBinaryLogCreateInput,
-      LogTypes.Binary,
-    );
-  });
-
-  it('should handle EntityNotFound error', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest
-              .fn()
-              .mockRejectedValue(new EntityNotFound('Habit', fakeHabitId)),
-          };
-        }
-      })
-      .compile();
-
-    controller = moduleRef.get<HabitController>(HabitController);
-
-    expect(async () => {
-      await controller.logUserBinaryHabit(
-        fakeHabitId,
-        fakeBinaryLogCreateInput,
-        fakeAuthReq,
-      );
-    }).rejects.toThrow(NotFoundException);
-
-    expect(async () => {
       await controller.logUserTimerHabit(
-        fakeHabitId,
+        habitId,
         fakeTimerLogCreateInput,
         fakeAuthReq,
       );
-    }).rejects.toThrow(NotFoundException);
-  });
 
-  it('should handle InvalidType error', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest.fn().mockRejectedValue(new InvalidType('dummy')),
-          };
-        }
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.logUserHabit).toHaveBeenCalledWith(
+        habitId,
+        fakeAuthReq.user.id,
+        fakeTimerLogCreateInput,
+        LogTypes.Timer,
+      );
+    });
+
+    it('should logUserBinaryHabit', async () => {
+      const habitId = 1;
+
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
       })
-      .compile();
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest.fn(),
+            };
+          }
+        })
+        .compile();
 
-    controller = moduleRef.get<HabitController>(HabitController);
+      controller = moduleRef.get<HabitController>(HabitController);
 
-    expect(async () => {
       await controller.logUserBinaryHabit(
-        fakeHabitId,
+        habitId,
         fakeBinaryLogCreateInput,
         fakeAuthReq,
       );
-    }).rejects.toThrow(BadRequestException);
 
-    expect(async () => {
-      await controller.logUserTimerHabit(
-        fakeHabitId,
-        fakeTimerLogCreateInput,
-        fakeAuthReq,
-      );
-    }).rejects.toThrow(BadRequestException);
-  });
+      service = moduleRef.get<HabitService>(HabitService);
 
-  it('should handle ForbiddenAccess error', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest
-              .fn()
-              .mockRejectedValue(new ForbiddenAccess(1, 1, 'dummy')),
-          };
-        }
-      })
-      .compile();
-
-    controller = moduleRef.get<HabitController>(HabitController);
-
-    expect(async () => {
-      await controller.logUserBinaryHabit(
-        fakeHabitId,
+      expect(service.logUserHabit).toHaveBeenCalledWith(
+        habitId,
+        fakeAuthReq.user.id,
         fakeBinaryLogCreateInput,
-        fakeAuthReq,
+        LogTypes.Binary,
       );
-    }).rejects.toThrow(ForbiddenException);
+    });
 
-    expect(async () => {
-      await controller.logUserTimerHabit(
-        fakeHabitId,
-        fakeTimerLogCreateInput,
-        fakeAuthReq,
-      );
-    }).rejects.toThrow(ForbiddenException);
+    it('should handle EntityNotFound error', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest
+                .fn()
+                .mockRejectedValue(new EntityNotFound('Habit', fakeHabitId)),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      expect(async () => {
+        await controller.logUserBinaryHabit(
+          fakeHabitId,
+          fakeBinaryLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(NotFoundException);
+
+      expect(async () => {
+        await controller.logUserTimerHabit(
+          fakeHabitId,
+          fakeTimerLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(NotFoundException);
+    });
+
+    it('should handle InvalidType error', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest
+                .fn()
+                .mockRejectedValue(new InvalidType('dummy')),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      expect(async () => {
+        await controller.logUserBinaryHabit(
+          fakeHabitId,
+          fakeBinaryLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(BadRequestException);
+
+      expect(async () => {
+        await controller.logUserTimerHabit(
+          fakeHabitId,
+          fakeTimerLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(BadRequestException);
+    });
+
+    it('should handle ForbiddenAccess error', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest
+                .fn()
+                .mockRejectedValue(new ForbiddenAccess(1, 1, 'dummy')),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      expect(async () => {
+        await controller.logUserBinaryHabit(
+          fakeHabitId,
+          fakeBinaryLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(ForbiddenException);
+
+      expect(async () => {
+        await controller.logUserTimerHabit(
+          fakeHabitId,
+          fakeTimerLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should handle UniqueConstraintFail error', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              logUserHabit: jest
+                .fn()
+                .mockRejectedValue(new UniqueConstraintFail('dummy')),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      expect(async () => {
+        await controller.logUserBinaryHabit(
+          fakeHabitId,
+          fakeBinaryLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(BadRequestException);
+
+      expect(async () => {
+        await controller.logUserTimerHabit(
+          fakeHabitId,
+          fakeTimerLogCreateInput,
+          fakeAuthReq,
+        );
+      }).rejects.toThrow(BadRequestException);
+    });
   });
 
-  it('should handle UniqueConstraintFail error', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            logUserHabit: jest
-              .fn()
-              .mockRejectedValue(new UniqueConstraintFail('dummy')),
-          };
-        }
+  describe('update user habit', () => {
+    it('should updateUserHabit', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
       })
-      .compile();
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              updateUserHabit: jest.fn(),
+            };
+          }
+        })
+        .compile();
 
-    controller = moduleRef.get<HabitController>(HabitController);
+      controller = moduleRef.get<HabitController>(HabitController);
 
-    expect(async () => {
-      await controller.logUserBinaryHabit(
-        fakeHabitId,
-        fakeBinaryLogCreateInput,
+      await controller.updateUserHabit(
+        fakeUserId,
+        fakeHabitUpdateInput,
         fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
       );
-    }).rejects.toThrow(BadRequestException);
 
-    expect(async () => {
-      await controller.logUserTimerHabit(
-        fakeHabitId,
-        fakeTimerLogCreateInput,
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.updateUserHabit).toHaveBeenCalledWith(
+        fakeUserId,
+        fakeHabitUpdateInput,
+        fakeAuthReq.user.id,
+      );
+    });
+
+    it('should updateUserHabit and return NOT_FOUND status code', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              updateUserHabit: jest.fn().mockResolvedValue(0),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      await controller.updateUserHabit(
+        fakeUserId,
+        fakeHabitUpdateInput,
         fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
       );
-    }).rejects.toThrow(BadRequestException);
-  });
 
-  it('should updateUserHabit', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            updateUserHabit: jest.fn(),
-          };
-        }
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(
+        HttpStatus.NOT_FOUND,
+      );
+    });
+
+    it('should updateUserHabit and return OK status code', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
       })
-      .compile();
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              updateUserHabit: jest.fn().mockResolvedValue(1),
+            };
+          }
+        })
+        .compile();
 
-    controller = moduleRef.get<HabitController>(HabitController);
+      controller = moduleRef.get<HabitController>(HabitController);
 
-    await controller.updateUserHabit(
-      fakeUserId,
-      fakeHabitUpdateInput,
-      fakeAuthReq,
-      fakeExpressResponse as unknown as Response,
-    );
+      await controller.updateUserHabit(
+        fakeUserId,
+        fakeHabitUpdateInput,
+        fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
+      );
 
-    service = moduleRef.get<HabitService>(HabitService);
-
-    expect(service.updateUserHabit).toHaveBeenCalledWith(
-      fakeUserId,
-      fakeHabitUpdateInput,
-      fakeAuthReq.user.id,
-    );
-  });
-
-  it('should updateUserHabit and return NOT_FOUND status code', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            updateUserHabit: jest.fn().mockResolvedValue(0),
-          };
-        }
-      })
-      .compile();
-
-    controller = moduleRef.get<HabitController>(HabitController);
-
-    await controller.updateUserHabit(
-      fakeUserId,
-      fakeHabitUpdateInput,
-      fakeAuthReq,
-      fakeExpressResponse as unknown as Response,
-    );
-
-    expect(fakeExpressResponse.status).toHaveBeenCalledWith(
-      HttpStatus.NOT_FOUND,
-    );
-  });
-
-  it('should updateUserHabit and return OK status code', async () => {
-    moduleRef = await Test.createTestingModule({
-      controllers: [HabitController],
-    })
-      .useMocker((token) => {
-        if (token === HabitService) {
-          return {
-            updateUserHabit: jest.fn().mockResolvedValue(1),
-          };
-        }
-      })
-      .compile();
-
-    controller = moduleRef.get<HabitController>(HabitController);
-
-    await controller.updateUserHabit(
-      fakeUserId,
-      fakeHabitUpdateInput,
-      fakeAuthReq,
-      fakeExpressResponse as unknown as Response,
-    );
-
-    expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
+    });
   });
 });
