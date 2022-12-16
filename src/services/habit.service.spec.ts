@@ -200,14 +200,14 @@ describe('HabitService', () => {
 
       const service = moduleRef.get<HabitService>(HabitService);
 
-      expect(async () => {
-        await service.deleteUserHabit(fakeHabitId, fakeUserId);
-      }).rejects.toThrow(EntityNotFound);
+      const isDeleted = await service.deleteUserHabit(fakeHabitId, fakeUserId);
+
+      expect(isDeleted).toBe(false);
     });
 
     it('should delete logs and habits in an consistent way', async () => {
       const fakePrismaConnector = {
-        $transaction: jest.fn(),
+        $transaction: jest.fn().mockResolvedValue([{}, {}]),
         habitLog: {
           deleteMany: jest.fn(),
         },
