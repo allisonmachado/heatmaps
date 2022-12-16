@@ -133,4 +133,37 @@ export class HabitService {
 
     return !!habitDeleted;
   }
+
+  async deleteUserHabitLog(
+    habitId: number,
+    habitLogId: number,
+    userId: number,
+  ): Promise<boolean> {
+    const habitLog = await this.prismaConnector.habitLog.findUnique({
+      where: {
+        id: habitLogId,
+      },
+    });
+
+    if (!habitLog) return false;
+
+    if (habitLog.habitId !== habitId) return false;
+
+    const habit = await this.prismaConnector.habit.findFirst({
+      where: {
+        id: habitLog.habitId,
+        userId,
+      },
+    });
+
+    if (!habit) return false;
+
+    const deletedHabitLog = await this.prismaConnector.habitLog.delete({
+      where: {
+        id: habitLogId,
+      },
+    });
+
+    return !!deletedHabitLog;
+  }
 }

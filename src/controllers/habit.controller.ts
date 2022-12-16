@@ -126,4 +126,24 @@ export class HabitController {
       res.status(HttpStatus.NOT_FOUND).send();
     }
   }
+
+  @Delete('/:habitId/logs/:habitLogId')
+  async deleteUserHabitLog(
+    @Param('habitId', ParseIntPipe) habitId: number,
+    @Param('habitLogId', ParseIntPipe) habitLogId: number,
+    @Request() req: AuthenticatedRequest,
+    @Response() res: ExpResponse,
+  ) {
+    const isDeleted = await this.habitService.deleteUserHabitLog(
+      habitId,
+      habitLogId,
+      req.user.id,
+    );
+
+    if (isDeleted) {
+      res.status(HttpStatus.OK).send();
+    } else {
+      res.status(HttpStatus.NOT_FOUND).send();
+    }
+  }
 }

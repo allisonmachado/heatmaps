@@ -48,6 +48,7 @@ describe('HabitController', () => {
     color: 'FFFFFF',
   };
   const fakeHabitId = 1;
+  const fakeHabitLogId = 1;
   const fakeUserId = 1;
 
   describe('log user habit', () => {
@@ -396,6 +397,76 @@ describe('HabitController', () => {
 
       expect(service.deleteUserHabit).toHaveBeenCalledWith(
         fakeHabitId,
+        fakeAuthReq.user.id,
+      );
+
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
+
+  describe('delete user habit log', () => {
+    it('should delete return 200 status code', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              deleteUserHabitLog: jest.fn().mockResolvedValue(true),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      await controller.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
+      );
+
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.deleteUserHabitLog).toHaveBeenCalledWith(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeAuthReq.user.id,
+      );
+
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
+    });
+
+    it('should delete return 404 status code in case not found', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              deleteUserHabitLog: jest.fn().mockResolvedValue(false),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      await controller.deleteUserHabitLog(
+        fakeHabitId,
+        fakeHabitLogId,
+        fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
+      );
+
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.deleteUserHabitLog).toHaveBeenCalledWith(
+        fakeHabitId,
+        fakeHabitLogId,
         fakeAuthReq.user.id,
       );
 
