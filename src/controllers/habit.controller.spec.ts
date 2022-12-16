@@ -338,4 +338,70 @@ describe('HabitController', () => {
       expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
     });
   });
+
+  describe('delete user habit', () => {
+    it('should delete return 200 status code', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              deleteUserHabit: jest.fn().mockResolvedValue(true),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      await controller.deleteUserHabit(
+        fakeHabitId,
+        fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
+      );
+
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.deleteUserHabit).toHaveBeenCalledWith(
+        fakeHabitId,
+        fakeAuthReq.user.id,
+      );
+
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(HttpStatus.OK);
+    });
+
+    it('should delete return 404 status code in case not found', async () => {
+      moduleRef = await Test.createTestingModule({
+        controllers: [HabitController],
+      })
+        .useMocker((token) => {
+          if (token === HabitService) {
+            return {
+              deleteUserHabit: jest.fn().mockResolvedValue(false),
+            };
+          }
+        })
+        .compile();
+
+      controller = moduleRef.get<HabitController>(HabitController);
+
+      await controller.deleteUserHabit(
+        fakeHabitId,
+        fakeAuthReq,
+        fakeExpressResponse as unknown as Response,
+      );
+
+      service = moduleRef.get<HabitService>(HabitService);
+
+      expect(service.deleteUserHabit).toHaveBeenCalledWith(
+        fakeHabitId,
+        fakeAuthReq.user.id,
+      );
+
+      expect(fakeExpressResponse.status).toHaveBeenCalledWith(
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
 });
