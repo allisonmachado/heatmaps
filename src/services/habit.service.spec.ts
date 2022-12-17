@@ -379,4 +379,121 @@ describe('HabitService', () => {
       expect(fakePrismaConnector.habitLog.delete).toHaveBeenCalled();
     });
   });
+
+  describe('list user habit logs', () => {
+    it('should not query if date is invalid', async () => {
+      const startDate = new Date('2022-06-02');
+      const endDate = new Date('2022-06-02');
+
+      const fakePrismaConnector = {
+        habit: {
+          findFirst: jest.fn(),
+        },
+        habitLog: {
+          findMany: jest.fn(),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const logs = await service.listUserHabitLogs(
+        fakeUserId,
+        fakeHabitId,
+        startDate,
+        endDate,
+      );
+
+      expect(logs).toEqual([]);
+      expect(fakePrismaConnector.habit.findFirst).not.toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.findMany).not.toHaveBeenCalled();
+    });
+
+    it('should return empty if logs do not belong to user', async () => {
+      const startDate = new Date('2022-06-02');
+      const endDate = new Date('2022-06-22');
+
+      const fakePrismaConnector = {
+        habit: {
+          findFirst: jest.fn().mockResolvedValue(null),
+        },
+        habitLog: {
+          findMany: jest.fn(),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const logs = await service.listUserHabitLogs(
+        fakeUserId,
+        fakeHabitId,
+        startDate,
+        endDate,
+      );
+
+      expect(logs).toEqual([]);
+      expect(fakePrismaConnector.habit.findFirst).toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.findMany).not.toHaveBeenCalled();
+    });
+
+    it('should list user habit logs', async () => {
+      const startDate = new Date('2022-06-02');
+      const endDate = new Date('2022-06-22');
+
+      const fakeHabitLog = {
+        id: 1,
+        habitId: fakeHabitId,
+        day: new Date('2022-06-22'),
+        timerValue: 20,
+      };
+
+      const fakePrismaConnector = {
+        habit: {
+          findFirst: jest.fn().mockResolvedValue({}),
+        },
+        habitLog: {
+          findMany: jest.fn().mockResolvedValue([fakeHabitLog]),
+        },
+      };
+      const moduleRef: TestingModule = await Test.createTestingModule({
+        providers: [HabitService],
+      })
+        .useMocker((token) => {
+          if (token === PrismaConnector) {
+            return fakePrismaConnector;
+          }
+        })
+        .compile();
+
+      const service = moduleRef.get<HabitService>(HabitService);
+
+      const logs = await service.listUserHabitLogs(
+        fakeUserId,
+        fakeHabitId,
+        startDate,
+        endDate,
+      );
+
+      expect(logs).toEqual([fakeHabitLog]);
+      expect(fakePrismaConnector.habit.findFirst).toHaveBeenCalled();
+      expect(fakePrismaConnector.habitLog.findMany).toHaveBeenCalled();
+    });
+  });
 });

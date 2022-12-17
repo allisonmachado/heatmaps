@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { HabitLog, Prisma } from '@prisma/client';
 import { PrismaConnector } from '../lib/db/prisma.connector';
 import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
 import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
@@ -80,6 +80,36 @@ export class HabitService {
     return this.prismaConnector.habit.findMany({
       where: {
         userId,
+      },
+    });
+  }
+
+  async listUserHabitLogs(
+    userId: number,
+    habitId: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<HabitLog[]> {
+    if (startDate >= endDate) {
+      return [];
+    }
+
+    const habit = await this.prismaConnector.habit.findFirst({
+      where: {
+        id: habitId,
+        userId,
+      },
+    });
+
+    if (!habit) return [];
+
+    return this.prismaConnector.habitLog.findMany({
+      where: {
+        habitId,
+        day: {
+          gt: startDate,
+          lte: endDate,
+        },
       },
     });
   }
