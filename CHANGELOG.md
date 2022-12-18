@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.0](https://github.com/allisonmachado/heatmaps/compare/v0.1.1...v0.2.0) (2022-12-18)
+
+
+### Features
+
+* delete user habit ([ed9034b](https://github.com/allisonmachado/heatmaps/commit/ed9034bd181fd72e4dd3874c0ed82952f373f588))
+* delete user habit log ([158dbbe](https://github.com/allisonmachado/heatmaps/commit/158dbbedfc0c7e391159a963ef0e743e9f25dbd5))
+* list user habit-logs service ([413bd89](https://github.com/allisonmachado/heatmaps/commit/413bd892f8a6afb46adce863fd7f877758ebde0c))
+
 ## [0.1.1](https://github.com/allisonmachado/heatmaps/compare/v0.1.0...v0.1.1) (2022-12-11)
 
 
