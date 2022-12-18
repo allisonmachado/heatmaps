@@ -1,8 +1,11 @@
+name: Release
+
+# This action works on closed pull requests
 on:
   pull_request_target:
     types:
       - closed
-name: release-please
+
 jobs:
   if_merged:
     if: github.event.pull_request.merged == true
