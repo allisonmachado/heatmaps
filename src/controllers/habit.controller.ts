@@ -12,12 +12,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Request,
   Response,
 } from '@nestjs/common';
 import { Response as ExpResponse } from 'express';
 import { AuthenticatedRequest } from '../lib/dto/authenticated-request.dto';
 import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
+import { DateRange } from '../lib/dto/date-range';
 import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
 import { LogTypes } from '../lib/dto/log-types.dto';
@@ -145,5 +147,19 @@ export class HabitController {
     } else {
       res.status(HttpStatus.NOT_FOUND).send();
     }
+  }
+
+  @Get('/:id/logs')
+  async listUserHabitLog(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() query: DateRange,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    return this.habitService.listUserHabitLogs(
+      req.user.id,
+      id,
+      query.startDate,
+      query.endDate,
+    );
   }
 }
