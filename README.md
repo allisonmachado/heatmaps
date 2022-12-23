@@ -10,7 +10,7 @@ Inspired by `lifeofdiscipline.com`, the goal is to have a similar system without
 
 This is the database for the habits tracker app:
 
-![Entity Relationship Diagram](prisma/ERD.png "Entity Relationship Diagram")
+![Entity Relationship Diagram](prisma/ERD.png 'Entity Relationship Diagram')
 
 ## Initialize database for development
 
@@ -48,11 +48,17 @@ $ npm install
 $ npm run start:dev
 ```
 
+4. To generate a user hashed password run
+
+```sh
+$ npm run hash -- my-secret-password
+```
+
 ## Object Relational Mapping
 
 This project uses Prisma ORM and the database client interface is generated based on the file `prisma/schema.prisma`.
 
-![Prisma ORM Client](prisma/client.png "Prisma ORM Client")
+![Prisma ORM Client](prisma/client.png 'Prisma ORM Client')
 
 To fix schema drift in the development environment [check this link][3].
 
@@ -70,29 +76,29 @@ After database modifications, it's necessary to update the prisma client:
 $ npx prisma generate
 ```
 
-# System Architecture 
+# System Architecture
 
 A simple three tier architecture is proposed to develop the solution.
 
-![Architecture](./docs/architecture.png "Architecture")
+![Architecture](./docs/architecture.png 'Architecture')
 
 # Code Architecture
 
 To be able to accommodate a source code base that may grow big as time passes, a layered implementation with well-defined responsibilities should be used:
 
-- *./src/controllers* - delegates the request to the appropriate underlying system.
-- *./src/services* - custom business related processing and rules (optional).
-- *./src/repositories* - database entities interaction.
+- _./src/controllers_ - delegates the request to the appropriate underlying system.
+- _./src/services_ - custom business related processing and rules (optional).
+- _./src/repositories_ - database entities interaction.
 
 The creation and naming of the elements above should always attempt to mimic the application model and entities. The application model is composed by the Entities defined in the system, such as `Users`, `Habits` and `HabitLogs`. For example, we could imagine a user-controller, user-service and user-repository.
 
 For code and definitions that are highly generic and that are not necessarily attached to any application model or entities, we should define them in the `lib` layer:
 
-- *./src/lib* - shared and reusable code.
+- _./src/lib_ - shared and reusable code.
 
 ## Use relative imports
 
-The creator of the Nest.js [suggests][1] that using the absolute paths is a bad practice. Also, the TypeScript's official documentation [recommends][2] using relative paths for our own modules. 
+The creator of the Nest.js [suggests][1] that using the absolute paths is a bad practice. Also, the TypeScript's official documentation [recommends][2] using relative paths for our own modules.
 
 Configure VS Code to import using relative paths by default
 
@@ -101,16 +107,19 @@ Configure VS Code to import using relative paths by default
 ## Example of generating new resources
 
 To create a new controller run:
+
 ```bash
 $ nest g controller controllers/user --flat
 ```
 
 To create a new service run:
+
 ```bash
 $ nest g service services/user --flat
 ```
 
 To create a new repository run:
+
 ```bash
 $ nest g provider repositories/user --flat
 ```
