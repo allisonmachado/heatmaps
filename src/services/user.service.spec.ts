@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { PrismaConnector } from '../lib/db/prisma.connector';
-import { InvalidCredentials } from '../lib/errors/invalid-credentials';
 import { Bcrypt } from '../lib/hash/bcrypt';
 import { UserService } from './user.service';
 
