@@ -28,9 +28,9 @@ describe('UserService', () => {
       password: await bcrypt.hash('123456'),
     };
 
-    expect(async () => {
-      await userService.assertValidCredentials(fakeUser as User, 'abc');
-    }).rejects.toThrow(InvalidCredentials);
+    const result = await userService.validatePassword(fakeUser as User, 'abc');
+
+    expect(result).toBe(false);
   });
 
   it('should pass with a valid password', async () => {
@@ -46,6 +46,11 @@ describe('UserService', () => {
       password: await bcrypt.hash(password),
     };
 
-    await userService.assertValidCredentials(fakeUser as User, password);
+    const result = await userService.validatePassword(
+      fakeUser as User,
+      password,
+    );
+
+    expect(result).toBe(true);
   });
 });

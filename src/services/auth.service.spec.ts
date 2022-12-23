@@ -32,51 +32,55 @@ describe('AuthService', () => {
   });
 
   it("should return null if password doesn't match", async () => {
+    const fakeUserService = {
+      findOne: jest.fn().mockResolvedValue({
+        name: 'John Doe',
+        email: fakeEmail,
+        password: '123',
+      }),
+      validatePassword: jest.fn().mockResolvedValue(false),
+    };
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [AuthService, JwtService],
     })
       .useMocker((token) => {
         if (token === UserService) {
-          return {
-            findOne: jest.fn().mockResolvedValue({
-              name: 'John Doe',
-              email: fakeEmail,
-              password: '123',
-            }),
-          };
+          return fakeUserService;
         }
       })
       .compile();
 
     service = moduleRef.get<AuthService>(AuthService);
 
-    const result = await service.validateUser(fakeEmail, fakePwd);
+    const user = await service.validateUser(fakeEmail, fakePwd);
 
-    expect(result).toBe(null);
+    expect(user).toBe(null);
   });
 
   it('should return user if password match', async () => {
+    const fakeUserService = {
+      findOne: jest.fn().mockResolvedValue({
+        name: 'John Doe',
+        email: fakeEmail,
+        password: '123',
+      }),
+      validatePassword: jest.fn().mockResolvedValue(true),
+    };
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [AuthService, JwtService],
     })
       .useMocker((token) => {
         if (token === UserService) {
-          return {
-            findOne: jest.fn().mockResolvedValue({
-              name: 'John Doe',
-              email: fakeEmail,
-              password: fakePwd,
-            }),
-          };
+          return fakeUserService;
         }
       })
       .compile();
 
     service = moduleRef.get<AuthService>(AuthService);
 
-    const result = await service.validateUser(fakeEmail, fakePwd);
+    const user = await service.validateUser(fakeEmail, fakePwd);
 
-    expect(result).toEqual({
+    expect(user).toEqual({
       name: 'John Doe',
       email: fakeEmail,
     });

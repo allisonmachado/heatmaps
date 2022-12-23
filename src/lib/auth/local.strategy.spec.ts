@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { PrismaConnector } from '../db/prisma.connector';
+import { Bcrypt } from '../hash/bcrypt';
 import { LocalStrategy } from './local.strategy';
 
 describe('LocalStrategy', () => {
@@ -16,6 +17,7 @@ describe('LocalStrategy', () => {
         UserService,
         JwtService,
         PrismaConnector,
+        Bcrypt,
       ],
     }).compile();
 
