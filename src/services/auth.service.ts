@@ -16,14 +16,13 @@ export class AuthService {
     pwd: string,
   ): Promise<Omit<User, 'password'>> {
     const user = await this.userService.findOne(email);
+    if (!user) return null;
 
-    if (user && user.password === pwd) {
-      delete user.password;
+    const isValidPassword = await this.userService.validatePassword(user, pwd);
+    if (!isValidPassword) return null;
 
-      return user;
-    }
-
-    return null;
+    delete user.password;
+    return user;
   }
 
   async loginUser(user: Omit<User, 'password'>) {
