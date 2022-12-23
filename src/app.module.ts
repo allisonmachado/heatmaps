@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './lib/auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { HabitController } from './controllers/habit.controller';
 import { HabitService } from './services/habit.service';
+import { Bcrypt } from './lib/hash/bcrypt';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { HabitService } from './services/habit.service';
       useClass: JwtAuthGuard,
     },
     HabitService,
+    Bcrypt,
   ],
 })
 export class AppModule {}
