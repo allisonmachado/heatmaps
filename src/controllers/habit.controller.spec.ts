@@ -2,9 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HabitService } from '../services/habit.service';
 import { HabitController } from './habit.controller';
 import { AuthenticatedRequest } from '../lib/dto/authenticated-request.dto';
-import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input.dto';
 import { LogTypes } from '../lib/dto/log-types.dto';
-import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
@@ -36,13 +34,6 @@ describe('HabitController', () => {
       username: 'user',
     },
   };
-  const fakeTimerLogCreateInput: TimerLogCreateInput = {
-    day: '2013-10-01',
-    timerValue: 15,
-  };
-  const fakeBinaryLogCreateInput: BinaryLogCreateInput = {
-    day: '2013-10-01',
-  };
   const fakeHabitUpdateInput: HabitUpdateInput = {
     title: 'habit-title',
     color: 'FFFFFF',
@@ -54,6 +45,11 @@ describe('HabitController', () => {
   describe('log user habit', () => {
     it('should logUserTimerHabit', async () => {
       const habitId = 1;
+      const fakeLogCreateInput = {
+        type: LogTypes.Timer,
+        day: '2022-12-20',
+        timerValue: 123,
+      };
 
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
@@ -69,24 +65,23 @@ describe('HabitController', () => {
 
       controller = moduleRef.get<HabitController>(HabitController);
 
-      await controller.logUserTimerHabit(
-        habitId,
-        fakeTimerLogCreateInput,
-        fakeAuthReq,
-      );
+      await controller.logUserHabit(habitId, fakeLogCreateInput, fakeAuthReq);
 
       service = moduleRef.get<HabitService>(HabitService);
 
       expect(service.logUserHabit).toHaveBeenCalledWith(
         habitId,
         fakeAuthReq.user.id,
-        fakeTimerLogCreateInput,
-        LogTypes.Timer,
+        fakeLogCreateInput,
       );
     });
 
     it('should logUserBinaryHabit', async () => {
       const habitId = 1;
+      const fakeLogCreateInput = {
+        type: LogTypes.Binary,
+        day: '2022-12-20',
+      };
 
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
@@ -102,23 +97,22 @@ describe('HabitController', () => {
 
       controller = moduleRef.get<HabitController>(HabitController);
 
-      await controller.logUserBinaryHabit(
-        habitId,
-        fakeBinaryLogCreateInput,
-        fakeAuthReq,
-      );
+      await controller.logUserHabit(habitId, fakeLogCreateInput, fakeAuthReq);
 
       service = moduleRef.get<HabitService>(HabitService);
 
       expect(service.logUserHabit).toHaveBeenCalledWith(
         habitId,
         fakeAuthReq.user.id,
-        fakeBinaryLogCreateInput,
-        LogTypes.Binary,
+        fakeLogCreateInput,
       );
     });
 
     it('should handle EntityNotFound error', async () => {
+      const fakeLogCreateInput = {
+        type: LogTypes.Binary,
+        day: '2022-12-20',
+      };
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
       })
@@ -136,23 +130,27 @@ describe('HabitController', () => {
       controller = moduleRef.get<HabitController>(HabitController);
 
       expect(async () => {
-        await controller.logUserBinaryHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeBinaryLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(NotFoundException);
 
       expect(async () => {
-        await controller.logUserTimerHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeTimerLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(NotFoundException);
     });
 
     it('should handle InvalidType error', async () => {
+      const fakeLogCreateInput = {
+        type: LogTypes.Binary,
+        day: '2022-12-20',
+      };
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
       })
@@ -170,23 +168,27 @@ describe('HabitController', () => {
       controller = moduleRef.get<HabitController>(HabitController);
 
       expect(async () => {
-        await controller.logUserBinaryHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeBinaryLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(BadRequestException);
 
       expect(async () => {
-        await controller.logUserTimerHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeTimerLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(BadRequestException);
     });
 
     it('should handle ForbiddenAccess error', async () => {
+      const fakeLogCreateInput = {
+        type: LogTypes.Binary,
+        day: '2022-12-20',
+      };
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
       })
@@ -204,23 +206,27 @@ describe('HabitController', () => {
       controller = moduleRef.get<HabitController>(HabitController);
 
       expect(async () => {
-        await controller.logUserBinaryHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeBinaryLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(ForbiddenException);
 
       expect(async () => {
-        await controller.logUserTimerHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeTimerLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(ForbiddenException);
     });
 
     it('should handle UniqueConstraintFail error', async () => {
+      const fakeLogCreateInput = {
+        type: LogTypes.Binary,
+        day: '2022-12-20',
+      };
       moduleRef = await Test.createTestingModule({
         controllers: [HabitController],
       })
@@ -238,17 +244,17 @@ describe('HabitController', () => {
       controller = moduleRef.get<HabitController>(HabitController);
 
       expect(async () => {
-        await controller.logUserBinaryHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeBinaryLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(BadRequestException);
 
       expect(async () => {
-        await controller.logUserTimerHabit(
+        await controller.logUserHabit(
           fakeHabitId,
-          fakeTimerLogCreateInput,
+          fakeLogCreateInput,
           fakeAuthReq,
         );
       }).rejects.toThrow(BadRequestException);

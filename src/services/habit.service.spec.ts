@@ -13,6 +13,7 @@ describe('HabitService', () => {
   const fakeHabitLogId = 1;
   const fakeUserId = 1;
   const fakeTimerLogCreateInput = {
+    type: LogTypes.Timer,
     day: '2022-12-11',
     timerValue: 60,
   };
@@ -41,7 +42,6 @@ describe('HabitService', () => {
           fakeHabitId,
           fakeUserId,
           fakeTimerLogCreateInput,
-          LogTypes.Timer,
         );
       }).rejects.toThrow(EntityNotFound);
     });
@@ -71,7 +71,6 @@ describe('HabitService', () => {
           fakeHabitId,
           fakeUserId,
           fakeTimerLogCreateInput,
-          LogTypes.Timer,
         );
       }).rejects.toThrow(InvalidType);
     });
@@ -102,7 +101,6 @@ describe('HabitService', () => {
           fakeHabitId,
           fakeUserId,
           fakeTimerLogCreateInput,
-          LogTypes.Timer,
         );
       }).rejects.toThrow(ForbiddenAccess);
     });
@@ -135,13 +133,17 @@ describe('HabitService', () => {
         fakeHabitId,
         fakeUserId,
         fakeTimerLogCreateInput,
-        LogTypes.Timer,
       );
 
       expect(fakePrismaConnector.habitLog.create).toHaveBeenCalled();
     });
 
     it('should fail if the habit log already exists', async () => {
+      const fakeLogCreateInput = {
+        type: LogTypes.Timer,
+        day: '2022-12-11',
+        timerValue: 60,
+      };
       const fakePrismaConnector = {
         habit: {
           findUnique: jest.fn().mockResolvedValue({
@@ -171,12 +173,7 @@ describe('HabitService', () => {
       const service = moduleRef.get<HabitService>(HabitService);
 
       expect(async () => {
-        await service.logUserHabit(
-          fakeHabitId,
-          fakeUserId,
-          fakeTimerLogCreateInput,
-          LogTypes.Timer,
-        );
+        await service.logUserHabit(fakeHabitId, fakeUserId, fakeLogCreateInput);
       }).rejects.toThrow(UniqueConstraintFail);
     });
   });

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { HabitLog, Prisma } from '@prisma/client';
 import { PrismaConnector } from '../lib/db/prisma.connector';
-import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
 import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
-import { LogTypes } from '../lib/dto/log-types.dto';
-import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input.dto';
+import { LogCreateInput } from '../lib/dto/log-create-input.dto';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
@@ -28,12 +26,7 @@ export class HabitService {
     });
   }
 
-  async logUserHabit(
-    habitId: number,
-    userId: number,
-    log: TimerLogCreateInput | BinaryLogCreateInput,
-    type: LogTypes,
-  ) {
+  async logUserHabit(habitId: number, userId: number, log: LogCreateInput) {
     const habit = await this.prismaConnector.habit.findUnique({
       where: {
         id: habitId,
@@ -44,13 +37,15 @@ export class HabitService {
       throw new EntityNotFound('Habit', habitId);
     }
 
-    if (habit.type !== type) {
-      throw new InvalidType(type);
+    if (habit.type !== log.type) {
+      throw new InvalidType(log.type);
     }
 
     if (habit.userId !== userId) {
       throw new ForbiddenAccess(userId, habitId, 'Habit');
     }
+
+    delete log.type;
 
     try {
       await this.prismaConnector.habitLog.create({
