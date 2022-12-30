@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0](https://github.com/allisonmachado/heatmaps/compare/v0.2.0...v0.3.0) (2022-12-30)
+
+
+### Features
+
+* add bcrypt to hash and compare passwords ([cc09ee7](https://github.com/allisonmachado/heatmaps/commit/cc09ee79fe2e1ca6f868b80d3e7cf3f4bbb91de0))
+* assert valid user credentials ([fb54e30](https://github.com/allisonmachado/heatmaps/commit/fb54e30c05afea258f14c1ac4521de95e7c31bc2))
+* expose endpoint to list user habit-logs ([1accc04](https://github.com/allisonmachado/heatmaps/commit/1accc04221ec3bf279084ac47f2b2070d6008483))
+* update auth-service to check password hash ([8f815ef](https://github.com/allisonmachado/heatmaps/commit/8f815efa53d86fbbd5e52be48fb53943df462932))
+
 ## [0.2.0](https://github.com/allisonmachado/heatmaps/compare/v0.1.1...v0.2.0) (2022-12-18)
 
 
