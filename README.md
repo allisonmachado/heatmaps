@@ -8,7 +8,7 @@ Inspired by `lifeofdiscipline.com`, the goal is to have a similar system without
 
 # Database Design
 
-This is the database for the habits tracker app:
+This is the main database schema used by the habits tracker app:
 
 ![Entity Relationship Diagram](prisma/ERD.png 'Entity Relationship Diagram')
 
