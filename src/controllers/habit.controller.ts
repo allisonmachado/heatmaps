@@ -18,12 +18,10 @@ import {
 } from '@nestjs/common';
 import { Response as ExpResponse } from 'express';
 import { AuthenticatedRequest } from '../lib/dto/authenticated-request.dto';
-import { BinaryLogCreateInput } from '../lib/dto/binary-log-create-input.dto';
 import { DateRange } from '../lib/dto/date-range';
 import { HabitCreateInput } from '../lib/dto/habit-create-input.dto';
 import { HabitUpdateInput } from '../lib/dto/habit-update-input.dto';
-import { LogTypes } from '../lib/dto/log-types.dto';
-import { TimerLogCreateInput } from '../lib/dto/timer-log-create-input.dto';
+import { LogCreateInput } from '../lib/dto/log-create-input.dto';
 import { ForbiddenAccess } from '../lib/errors/forbidden-access';
 import { EntityNotFound } from '../lib/errors/habit-not-found';
 import { InvalidType } from '../lib/errors/invalid-type';
@@ -35,33 +33,6 @@ export class HabitController {
   private readonly logger = new Logger(HabitController.name);
 
   constructor(private habitService: HabitService) {}
-
-  private async logUserHabit(
-    habitId: number,
-    userId: number,
-    log: TimerLogCreateInput | BinaryLogCreateInput,
-    logType: LogTypes,
-  ) {
-    try {
-      await this.habitService.logUserHabit(habitId, userId, log, logType);
-    } catch (error) {
-      if (error instanceof EntityNotFound) {
-        throw new NotFoundException(error.message);
-      }
-      if (error instanceof InvalidType) {
-        throw new BadRequestException(error.message);
-      }
-      if (error instanceof ForbiddenAccess) {
-        throw new ForbiddenException(error.message);
-      }
-      if (error instanceof UniqueConstraintFail) {
-        throw new BadRequestException(error.message);
-      }
-
-      this.logger.error(error);
-      throw error;
-    }
-  }
 
   @Post('/')
   async createUserHabit(
@@ -96,22 +67,31 @@ export class HabitController {
     }
   }
 
-  @Post('/:habitId/logs/binary')
-  async logUserBinaryHabit(
+  @Post('/:habitId/logs')
+  async logUserHabit(
     @Param('habitId', ParseIntPipe) habitId: number,
-    @Body() log: BinaryLogCreateInput,
+    @Body() log: LogCreateInput,
     @Request() req: AuthenticatedRequest,
   ) {
-    await this.logUserHabit(habitId, req.user.id, log, LogTypes.Binary);
-  }
+    try {
+      await this.habitService.logUserHabit(habitId, req.user.id, log);
+    } catch (error) {
+      if (error instanceof EntityNotFound) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof InvalidType) {
+        throw new BadRequestException(error.message);
+      }
+      if (error instanceof ForbiddenAccess) {
+        throw new ForbiddenException(error.message);
+      }
+      if (error instanceof UniqueConstraintFail) {
+        throw new BadRequestException(error.message);
+      }
 
-  @Post('/:habitId/logs/timer')
-  async logUserTimerHabit(
-    @Param('habitId', ParseIntPipe) habitId: number,
-    @Body() log: TimerLogCreateInput,
-    @Request() req: AuthenticatedRequest,
-  ) {
-    await this.logUserHabit(habitId, req.user.id, log, LogTypes.Timer);
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   @Delete('/:id')
