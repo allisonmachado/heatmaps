@@ -4,6 +4,10 @@
   "description": "Habits tracker application backend API",
   "author": "Allison Machado Gonçalves",
   "private": true,
+  "engines": {
+    "node": "^18",
+    "npm": "^8"
+  },
   "scripts": {
     "clean:dist": "rimraf dist",
     "clean:modules": "rimraf node_modules",
@@ -21,14 +25,16 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prisma:migrate:reset": "npx prisma migrate reset",
+    "prisma:seed": "npx prisma db seed",
     "hash": "node ./node_modules/bcryptjs/bin/bcrypt"
   },
   "dependencies": {
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.2.1",
-    "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
+    "@nestjs/jwt": "^9.0.0",
     "@nestjs/platform-express": "^9.2.1",
     "@nestjs/swagger": "^6.1.4",
     "@prisma/client": "^4.7.1",
@@ -43,6 +49,7 @@
     "rxjs": "^7.6.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -85,5 +92,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
